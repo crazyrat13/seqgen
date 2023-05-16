@@ -1,0 +1,10 @@
+[package]
+name = "seqgen"
+version = "0.1.0"
+edition = "2021"
+
+[[example]]
+name = "fib_seq"
+
+[[example]]
+name = "xy_seq"
