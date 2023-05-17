@@ -1,0 +1,2 @@
+# seqgen
+Sequence generation library
