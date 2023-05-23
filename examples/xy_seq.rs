@@ -11,8 +11,5 @@ fn main() {
     let generator = SequenceGenerator::new(initial_elements, trans_func);
     let seq = generator.generate(10);
 
-    for i in 0..seq.len() {
-        let element = seq.nth_element(i).unwrap();
-        println!("{element}");
-    }
+    seq.for_each(|element| println!("{element}"));
 }

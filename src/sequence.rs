@@ -49,22 +49,21 @@ impl<'a, T, S> Sequence<'a, T, S> {
     }
 
     /// Returns the nth element of the sequence
-    pub fn nth_element(&'a self, index: usize) -> Option<&'a T> {
-        let index = if let Some(generator) = self.generator {
-            let initial_elements_len = generator.initial_elements_len();
+    pub fn nth_element(&self, index: usize) -> Option<&T> {
+        let index = match self.generator {
+            None => index,
+            Some(generator) => {
+                let initial_elements_len = generator.initial_elements_len();
 
-            if index < initial_elements_len {
-                return generator.nth_initial_element(index);
+                if index < initial_elements_len {
+                    return generator.nth_initial_element(index);
+                }
+
+                index - initial_elements_len
             }
-
-            index - initial_elements_len
-        } else {
-            index
         };
 
-        let rest_of_elements_len = self.rest_of_elements.len();
-
-        if index < rest_of_elements_len {
+        if index < self.rest_of_elements.len() {
             return Some(&self.rest_of_elements[index]);
         }
 
@@ -135,11 +134,8 @@ impl<'a, A> FromIterator<A> for Sequence<'a, A, Undefined> {
     }
 }
 
-impl<'a, T, S> Iterator for Sequence<'a, T, S>
-where
-    Self: 'a,
-{
-    type Item = &'a T;
+impl<T: Clone, S> Iterator for Sequence<'_, T, S> {
+    type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
         let iter_index = self.iter_index;
@@ -151,6 +147,9 @@ where
 
         self.iter_index += 1;
 
-        None // self.nth_element(iter_index)
+        match self.nth_element(iter_index) {
+            None => None,
+            Some(element) => Some(element.clone()),
+        }
     }
 }
