@@ -34,7 +34,7 @@ fn main() {
 
 ```
 
-An x-y sequence
+#### An x-y sequence
 ```rust
 use seqgen::SequenceGenerator;
 
