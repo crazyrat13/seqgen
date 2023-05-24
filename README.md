@@ -2,7 +2,18 @@
 
 ## Sequence generation library
 
-### examples:
+### Install:
+From the commend line in your project directory run the following 
+```console
+$ cargo add seqgen
+```
+Or add this under <code>[[dependencies]]</code> in <code>Cargo.toml</code>
+
+```toml
+seqgen = "0.1.0"
+```
+
+### Examples:
 
 #### Fibonacci
 
