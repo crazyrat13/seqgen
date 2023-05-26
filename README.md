@@ -37,8 +37,7 @@ fn main() {
 
 ```
 
-An x-y sequence
-
+### An x-y sequence
 ```rust
 use seqgen::SequenceGenerator;
 
@@ -58,7 +57,7 @@ fn main() {
 
 ```
 
-Sequence from an iterator
+### Sequence from an iterator
 
 ```rust
 use seqgen::{Sequence, SequenceGenerator};
