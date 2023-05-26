@@ -38,6 +38,7 @@ fn main() {
 ```
 
 #### An x-y sequence
+
 ```rust
 use seqgen::SequenceGenerator;
 
@@ -74,3 +75,5 @@ fn main() {
 }
 
 ```
+
+If you find this project useful [Give us a star on GitHub](https://github.com/crazyrat13/seqgen)
