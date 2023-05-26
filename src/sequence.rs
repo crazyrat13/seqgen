@@ -1,3 +1,5 @@
+//! This module defines the sequence type
+
 use crate::sequence_generator::SequenceGenerator;
 
 use std::marker::PhantomData;
@@ -13,7 +15,6 @@ use sequence_states::Undefined;
 pub struct Sequence<'a, T, S> {
     generator: Option<&'a SequenceGenerator<T>>,
     rest_of_elements: Vec<T>,
-    iter_index: usize,
     state: PhantomData<S>,
 }
 
@@ -22,7 +23,6 @@ impl<'a, T, S> Sequence<'a, T, S> {
         Self {
             generator: Some(generator),
             rest_of_elements,
-            iter_index: 0,
             state: PhantomData,
         }
     }
@@ -79,7 +79,6 @@ impl<'a, T> Sequence<'a, T, Defined> {
         Self {
             generator: Some(generator),
             rest_of_elements: undefined_seq.rest_of_elements,
-            iter_index: undefined_seq.iter_index,
             state: PhantomData,
         }
     }
@@ -97,7 +96,6 @@ impl<'a, T> Sequence<'a, T, Defined> {
     /// Reset the sequence
     pub fn reset(&mut self) {
         self.rest_of_elements = Vec::new();
-        self.iter_index = 0;
     }
 
     /// Reset the sequence and regenerate it with a number of elements given as argument
@@ -112,13 +110,32 @@ impl<'a, T> Sequence<'a, T, Undefined> {
         Self {
             generator: None,
             rest_of_elements,
-            iter_index: 0,
             state: PhantomData,
         }
     }
 
     pub fn define(self, generator: &'a SequenceGenerator<T>) -> Sequence<'a, T, Defined> {
         Sequence::new_from_undefined(self, generator)
+    }
+}
+
+impl<T: Clone, S> Sequence<'_, T, S> {
+    pub fn as_vec(&self) -> Vec<T> {
+        let mut vec = Vec::new();
+
+        match self.generator {
+            None => (),
+            Some(generator) => generator
+                .initial_elements()
+                .iter()
+                .for_each(|element| vec.push(element.clone())),
+        }
+
+        self.rest_of_elements
+            .iter()
+            .for_each(|element| vec.push(element.clone()));
+
+        vec
     }
 }
 
@@ -134,20 +151,49 @@ impl<'a, A> FromIterator<A> for Sequence<'a, A, Undefined> {
     }
 }
 
-impl<T: Clone, S> Iterator for Sequence<'_, T, S> {
+pub struct SequenceIter<'a, T, S> {
+    sequence: Sequence<'a, T, S>,
+    iter_index: usize,
+}
+
+impl<'a, T: Clone, S> IntoIterator for Sequence<'a, T, S> {
+    type Item = T;
+
+    type IntoIter = SequenceIter<'a, T, S>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        SequenceIter::new(self)
+    }
+}
+
+impl<'a, T, S> SequenceIter<'a, T, S> {
+    fn new(sequence: Sequence<'a, T, S>) -> Self {
+        Self {
+            sequence,
+            iter_index: 0,
+        }
+    }
+
+    /// Returns the sequence
+    pub fn as_seq(self) -> Sequence<'a, T, S> {
+        self.sequence
+    }
+}
+
+impl<T: Clone, S> Iterator for SequenceIter<'_, T, S> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
         let iter_index = self.iter_index;
 
-        if iter_index >= self.len() {
+        if iter_index >= self.sequence.len() {
             self.iter_index = 0;
             return None;
         }
 
         self.iter_index += 1;
 
-        match self.nth_element(iter_index) {
+        match self.sequence.nth_element(iter_index) {
             None => None,
             Some(element) => Some(element.clone()),
         }

@@ -8,5 +8,5 @@ fn main() {
     let mut defined_seq = undefined_seq.define(&generator);
 
     defined_seq.extend(7);
-    defined_seq.for_each(|element| println!("{element}"));
+    defined_seq.into_iter().for_each(|element| println!("{element}"));
 }
