@@ -19,6 +19,7 @@ pub struct Sequence<'a, T, S> {
 }
 
 impl<'a, T, S> Sequence<'a, T, S> {
+    /// Creates a new sequence
     pub(crate) fn new(generator: &'a SequenceGenerator<T>, rest_of_elements: Vec<T>) -> Self {
         Self {
             generator: Some(generator),
@@ -27,10 +28,12 @@ impl<'a, T, S> Sequence<'a, T, S> {
         }
     }
 
+    /// Returns a reference to the rest of elements of the sequence
     pub(crate) fn rest_of_elements(&self) -> &Vec<T> {
         &self.rest_of_elements
     }
 
+    /// Returns the length of the rest of elements of the sequence
     pub(crate) fn rest_of_elements_len(&self) -> usize {
         self.rest_of_elements.len()
     }
@@ -72,6 +75,7 @@ impl<'a, T, S> Sequence<'a, T, S> {
 }
 
 impl<'a, T> Sequence<'a, T, Defined> {
+    /// Creates a new sequence from an undefined one
     pub(crate) fn new_from_undefined(
         undefined_seq: Sequence<'a, T, Undefined>,
         generator: &'a SequenceGenerator<T>,
@@ -106,6 +110,7 @@ impl<'a, T> Sequence<'a, T, Defined> {
 }
 
 impl<'a, T> Sequence<'a, T, Undefined> {
+    /// Creates a new undefined sequence
     pub(crate) fn new_undefined(rest_of_elements: Vec<T>) -> Self {
         Self {
             generator: None,
@@ -114,12 +119,14 @@ impl<'a, T> Sequence<'a, T, Undefined> {
         }
     }
 
+    /// Define an undefined sequence (returns a defined one)
     pub fn define(self, generator: &'a SequenceGenerator<T>) -> Sequence<'a, T, Defined> {
         Sequence::new_from_undefined(self, generator)
     }
 }
 
 impl<T: Clone, S> Sequence<'_, T, S> {
+    /// Returns a vector representing the sequence
     pub fn as_vec(&self) -> Vec<T> {
         let mut vec = Vec::new();
 
@@ -167,6 +174,7 @@ impl<'a, T: Clone, S> IntoIterator for Sequence<'a, T, S> {
 }
 
 impl<'a, T, S> SequenceIter<'a, T, S> {
+    /// Creates a new sequence iterator
     fn new(sequence: Sequence<'a, T, S>) -> Self {
         Self {
             sequence,
@@ -174,7 +182,7 @@ impl<'a, T, S> SequenceIter<'a, T, S> {
         }
     }
 
-    /// Returns the sequence
+    /// Returns the underlying sequence
     pub fn as_seq(self) -> Sequence<'a, T, S> {
         self.sequence
     }
