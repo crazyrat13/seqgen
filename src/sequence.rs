@@ -40,6 +40,11 @@ impl<'a, T, S> Sequence<'a, T, S> {
 }
 
 impl<'a, T, S> Sequence<'a, T, S> {
+    /// Check if the sequence is empty
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     /// Returns the length of the sequence
     pub fn len(&self) -> usize {
         let mut len = self.rest_of_elements_len();
@@ -92,7 +97,7 @@ impl<'a, T> Sequence<'a, T, Defined> {
         self.rest_of_elements.extend(
             self.generator
                 .unwrap()
-                .extend_sequence(&self, number_of_elements)
+                .extend_sequence(self, number_of_elements)
                 .into_iter(),
         );
     }
@@ -201,9 +206,6 @@ impl<T: Clone, S> Iterator for SequenceIter<'_, T, S> {
 
         self.iter_index += 1;
 
-        match self.sequence.nth_element(iter_index) {
-            None => None,
-            Some(element) => Some(element.clone()),
-        }
+        self.sequence.nth_element(iter_index).cloned()
     }
 }

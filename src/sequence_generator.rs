@@ -69,12 +69,12 @@ impl<T> SequenceGenerator<T> {
     }
 
     /// Generate a sequence
-    pub fn generate<'a>(&'a self, number_of_elements: usize) -> Sequence<'a, T, Defined> {
+    pub fn generate(&self, number_of_elements: usize) -> Sequence<'_, T, Defined> {
         let intermediate_sequences = None;
         let number_of_elements = number_of_elements - self.initial_elements_len();
 
         Sequence::new(
-            &self,
+            self,
             self.internal_generate(intermediate_sequences, number_of_elements),
         )
     }
