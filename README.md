@@ -13,7 +13,7 @@ $ cargo add seqgen
 Or add this under <code>[[dependencies]]</code> in <code>Cargo.toml</code>
 
 ```toml
-seqgen = "0.1.4"
+seqgen = "0.1.5"
 ```
 
 ### Examples:
