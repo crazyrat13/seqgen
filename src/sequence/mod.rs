@@ -11,11 +11,11 @@ pub mod sequence_states {
 use crate::sequence_generator::SequenceGenerator;
 use std::marker::PhantomData;
 
-/// Sequence: a struct the represent an actual sequence
-
 // The sequence consists of the initial elements in the generator
 // if the sequence is defined + the rest of the elements in the sequence
 // if the sequence is not defined the it is only the rest of the elements
+
+/// Sequence: a struct the represent an actual sequence
 pub struct Sequence<'a, T, S> {
     generator: Option<&'a SequenceGenerator<T>>,
     rest_of_elements: Vec<T>,
