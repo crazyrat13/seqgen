@@ -19,27 +19,27 @@ impl<T> SequenceGenerator<T> {
         number_of_elements: usize,
     ) -> Vec<T> {
         let mut generated_elements = Vec::new();
+        let mut elements_ref = Vec::new();
+
+        self.initial_elements
+            .iter()
+            .for_each(|element| elements_ref.push(element));
+
+        if let Some(intermediate_sequences) = &intermediate_sequences {
+            intermediate_sequences.iter().for_each(|&sequence| {
+                sequence
+                    .iter()
+                    .for_each(|element| elements_ref.push(element))
+            });
+        }
 
         for _ in 0..number_of_elements {
-            let mut elements_ref = Vec::new();
-
-            self.initial_elements
-                .iter()
-                .for_each(|element| elements_ref.push(element));
-
-            if let Some(intermediate_sequences) = &intermediate_sequences {
-                intermediate_sequences.iter().for_each(|&sequence| {
-                    sequence
-                        .iter()
-                        .for_each(|element| elements_ref.push(element))
-                });
-            }
-
-            generated_elements
-                .iter()
-                .for_each(|element| elements_ref.push(element));
-
-            generated_elements.push((self.trans_func)(elements_ref));
+            generated_elements.push((self.trans_func)(
+                elements_ref
+                    .iter().copied()
+                    .chain(generated_elements.iter())
+                    .collect::<Vec<_>>(),
+            ));
         }
 
         generated_elements
