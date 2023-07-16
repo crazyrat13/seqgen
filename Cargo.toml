@@ -1,0 +1,22 @@
+[package]
+name = "seqgen"
+version = "0.2.0"
+edition = "2021"
+description = "Sequence generation and manipulation library"
+license = "MIT"
+repository = "https://github.com/crazyrat13/seqgen"
+
+[[example]]
+name = "infinite_iter"
+
+[[example]]
+name = "fib_seq"
+
+[[example]]
+name = "basic_bench"
+
+[[example]]
+name = "range_of_seq"
+
+[[example]]
+name = "xy_seq"
