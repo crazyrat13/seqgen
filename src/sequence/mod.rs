@@ -1,5 +1,5 @@
 //! This module defines the Sequence type
-//! and it ss the core of this library
+//! and it is the core of this library
 
 pub mod error;
 pub mod sequence_part;
