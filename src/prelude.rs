@@ -1,5 +1,5 @@
 //! Prelude for seqgen
 
-pub use crate::sequence::{
-    error::*, sequence_part::states::*, sequence_part::SequencePart, states::*, Sequence,
-};
+pub use crate::error::RangeError;
+pub use crate::sequence::{states::*, Sequence};
+pub use crate::sequence_part::{states::*, SequencePart};

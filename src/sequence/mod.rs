@@ -1,19 +1,14 @@
 //! This module defines the Sequence type
 //! and it is the core of this library
 
-pub mod error;
-pub mod sequence_part;
 pub mod states;
 pub mod types;
 
-use self::{
-    error::{RangeError, RangeErrorKind},
-    sequence_part::{
-        states::{AliveElements, Range},
-        SequencePart,
-    },
-    states::*,
-    types::TransitionFunction,
+use self::{states::*, types::TransitionFunction};
+use super::error::{RangeError, RangeErrorKind};
+use super::sequence_part::{
+    states::{AliveElements, Range},
+    SequencePart,
 };
 
 /// A type that represents a sequence.
@@ -129,7 +124,7 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
 
     /// Returns the nth element if it is alive
     /// This method does not generate the nth elements if it is dead it just returns None
-    fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
+    pub(super) fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
         if !self.nth_element_is_alive(index) {
             return None;
         }

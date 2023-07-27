@@ -1,9 +1,7 @@
 //! This module defines the states of the Sequence type
 
-use super::{
-    sequence_part::{states::AliveElements, SequencePart},
-    types::TransitionFunction,
-};
+use super::types::TransitionFunction;
+use crate::sequence_part::{states::AliveElements, SequencePart};
 
 /// A type that represents when the state
 /// has no initial elements
