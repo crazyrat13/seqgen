@@ -99,9 +99,9 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
 
     /// Generates the nth element (and all the preceding elements)
     fn generate_nth_element(&mut self, nth_element: usize) {
-        let alive_elements_len = self.alive_elements_len();
-
         if !self.nth_element_is_alive(nth_element) {
+            let alive_elements_len = self.alive_elements_len();
+
             for current_element_index in alive_elements_len..=nth_element {
                 let alive_elements_part = self.alive_elements();
                 let new_element = self
@@ -112,7 +112,7 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
         }
     }
 
-    /// Returns the nth element if it is alive.
+    /// Returns a reference to the nth element if it is alive.
     /// This method generate the nth elements if it is dead before returning it
     pub fn nth_element(&mut self, index: usize) -> &T {
         if !self.nth_element_is_alive(index) {
@@ -122,7 +122,7 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
         &self.alive_elements[index]
     }
 
-    /// Returns the nth element if it is alive
+    /// Returns a reference the nth element if it is alive
     /// This method does not generate the nth elements if it is dead it just returns None
     pub(super) fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
         if !self.nth_element_is_alive(index) {
