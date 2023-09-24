@@ -81,9 +81,9 @@ impl<T, I> Sequence<T, I, WithoutTransitionFunction> {
 }
 
 impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
-    /// Pre generate elements on Sequence
-    pub fn pre_generated(mut self, number_of_elements: usize) -> Self {
-        self.generate_nth_element(number_of_elements - self.initial_elements_len());
+    /// Pre generate elements of Sequence
+    pub fn pre_generate(mut self, number_of_elements: usize) -> Self {
+        self.generate_nth_element(number_of_elements - 1 + self.initial_elements_len());
         self
     }
 
@@ -107,13 +107,14 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
                 let new_element = self
                     .trans_func
                     .run(alive_elements_part, current_element_index);
+
                 self.alive_elements.push(new_element);
             }
         }
     }
 
     /// Returns a reference to the nth element if it is alive.
-    /// This method generate the nth elements if it is dead before returning it
+    /// This method generate the nth elements if it is dead before returning its reference
     pub fn nth_element(&mut self, index: usize) -> &T {
         if !self.nth_element_is_alive(index) {
             self.generate_nth_element(index);
@@ -122,7 +123,7 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
         &self.alive_elements[index]
     }
 
-    /// Returns a reference the nth element if it is alive
+    /// Returns a reference to the nth element if it is alive in a Some variant
     /// This method does not generate the nth elements if it is dead it just returns None
     pub(super) fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
         if !self.nth_element_is_alive(index) {
@@ -152,6 +153,17 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
         }
 
         Ok(SequencePart::new_range(self, start, end))
+    }
+
+    /// Removes all generated elements
+    pub fn clear(&mut self) {
+        let mut initial_elements = Vec::new();
+
+        for index in 0..self.initial_elements_len() {
+            initial_elements.push(self.alive_elements.remove(index));
+        }
+
+        self.alive_elements = initial_elements;
     }
 }
 

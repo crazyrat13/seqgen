@@ -11,7 +11,7 @@ fn main() {
                     .nth_element(current_element_index - 2)
                     .unwrap()
         })
-        .pre_generated(188); // more than 188 will cause an overflow
+        .pre_generate(185); // more than 185 will cause a u_128 overflow
 
     seq.alive_elements()
         .for_each(|element| println!("{element}"));

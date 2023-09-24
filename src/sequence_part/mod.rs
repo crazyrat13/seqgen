@@ -78,7 +78,7 @@ impl<'a, T> SequencePart<'a, T, Range> {
 
     /// Returns the nth elements of the range
     pub fn nth_element(&self, index: usize) -> Option<&T> {
-        if !self.nth_element_in_range(index) {
+        if !self.nth_element_is_in_range(index) {
             return None;
         }
 
@@ -86,7 +86,7 @@ impl<'a, T> SequencePart<'a, T, Range> {
     }
 
     /// Checks if the nth element is in range
-    pub fn nth_element_in_range(&self, index: usize) -> bool {
+    pub fn nth_element_is_in_range(&self, index: usize) -> bool {
         index >= self.state.start() && index < self.state.end()
     }
 }
