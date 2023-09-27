@@ -38,18 +38,18 @@ pub struct WithoutTransitionFunction;
 
 /// A type that represents when the state
 /// has transition function
-pub struct WithTransitionFunction<T>(TransitionFunction<T>);
+pub struct WithTransitionFunction<T, I>(TransitionFunction<T, I>);
 
-impl<T> WithTransitionFunction<T> {
+impl<T, I> WithTransitionFunction<T, I> {
     /// Create new instance
-    pub fn new(trans_func: TransitionFunction<T>) -> Self {
+    pub fn new(trans_func: TransitionFunction<T, I>) -> Self {
         Self(trans_func)
     }
 
     /// Runs the transition function
     pub fn run(
         &self,
-        alive_elements_part: SequencePart<'_, T, AliveElements>,
+        alive_elements_part: SequencePart<'_, T, I, AliveElements>,
         current_element_index: usize,
     ) -> T {
         (self.0)(alive_elements_part, current_element_index)

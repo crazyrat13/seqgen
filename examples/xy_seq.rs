@@ -19,7 +19,7 @@ fn main() {
             string
         });
 
-    seq.range(0, 100)
+    seq.range(0, 12)
         .unwrap()
         .for_each(|element| println!("{element}"));
 }

@@ -21,6 +21,14 @@ pub struct Sequence<T, I, F> {
     iter_index: usize,
 }
 
+pub trait SharedSequenceBehavior {
+    /// Pre generate elements of Sequence
+    fn pre_generate(self, number_of_elements: usize) -> Self;
+
+     /// Removes all generated elements
+    fn clear(&mut self);
+}
+
 impl<T> Default for Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
     /// Creates a default instance of Sequence
     fn default() -> Self {
@@ -40,13 +48,13 @@ impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
     }
 }
 
-impl<T, F> Sequence<T, WithoutInitialElements, F> {
+impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
     /// Adds initial elements to Sequence
-    pub fn initial_elements(self, initial_elements: Vec<T>) -> Sequence<T, WithInitialElements, F> {
+    pub fn initial_elements(self, initial_elements: Vec<T>) -> Sequence<T, WithInitialElements, WithoutTransitionFunction> {
         let initial_elements_len = initial_elements.len();
         let alive_elements = initial_elements
             .into_iter()
-            .chain(self.alive_elements.into_iter())
+            .chain(self.alive_elements)
             .collect::<Vec<_>>();
 
         Sequence {
@@ -69,8 +77,8 @@ impl<T, I> Sequence<T, I, WithoutTransitionFunction> {
     /// Adds transition function to Sequence
     pub fn transition_function(
         self,
-        trans_func: TransitionFunction<T>,
-    ) -> Sequence<T, I, WithTransitionFunction<T>> {
+        trans_func: TransitionFunction<T, I>,
+    ) -> Sequence<T, I, WithTransitionFunction<T, I>> {
         Sequence {
             initial_elements: self.initial_elements,
             trans_func: WithTransitionFunction::new(trans_func),
@@ -80,13 +88,7 @@ impl<T, I> Sequence<T, I, WithoutTransitionFunction> {
     }
 }
 
-impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
-    /// Pre generate elements of Sequence
-    pub fn pre_generate(mut self, number_of_elements: usize) -> Self {
-        self.generate_nth_element(number_of_elements - 1 + self.initial_elements_len());
-        self
-    }
-
+impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     /// Returns the length of the alive elements
     pub fn alive_elements_len(&self) -> usize {
         self.alive_elements.len()
@@ -134,7 +136,7 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
     }
 
     /// Returns a sequence part that represents the alive elements
-    pub fn alive_elements(&self) -> SequencePart<'_, T, AliveElements> {
+    pub fn alive_elements(&self) -> SequencePart<'_, T, I, AliveElements> {
         SequencePart::new(self)
     }
 
@@ -143,7 +145,7 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
         &mut self,
         start: usize,
         end: usize,
-    ) -> Result<SequencePart<'_, T, Range>, RangeError> {
+    ) -> Result<SequencePart<'_, T, I, Range>, RangeError> {
         if start > end {
             return Err(RangeError::new(RangeErrorKind::InvalidRange));
         }
@@ -154,9 +156,15 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
 
         Ok(SequencePart::new_range(self, start, end))
     }
+}
 
-    /// Removes all generated elements
-    pub fn clear(&mut self) {
+impl<T> SharedSequenceBehavior for Sequence<T, WithInitialElements, WithTransitionFunction<T, WithInitialElements>> {
+    fn pre_generate(mut self, number_of_elements: usize) -> Self {
+        self.generate_nth_element(number_of_elements - 1 + self.initial_elements_len());
+        self
+    }
+
+    fn clear(&mut self) {
         let mut initial_elements = Vec::new();
 
         for index in 0..self.initial_elements_len() {
@@ -167,7 +175,18 @@ impl<T> Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
     }
 }
 
-impl<T: Clone> Iterator for Sequence<T, WithInitialElements, WithTransitionFunction<T>> {
+impl<T> SharedSequenceBehavior for Sequence<T, WithoutInitialElements, WithTransitionFunction<T, WithoutInitialElements>> {
+    fn pre_generate(mut self, number_of_elements: usize) -> Self {
+        self.generate_nth_element(number_of_elements - 1);
+        self
+    }
+
+    fn clear(&mut self) {
+        self.alive_elements = Vec::new();
+    }
+}
+
+impl<T: Clone, I> Iterator for Sequence<T, I, WithTransitionFunction<T, I>> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {

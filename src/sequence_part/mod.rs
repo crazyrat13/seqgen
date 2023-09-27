@@ -10,17 +10,17 @@ use super::sequence::{states::*, Sequence};
 /// This type represents a part of a sequence.
 /// it could be the alive elements or a range of the sequence
 /// This type is used only to read from not to write to the sequence
-pub struct SequencePart<'a, T, P> {
-    parent_sequence: &'a Sequence<T, WithInitialElements, WithTransitionFunction<T>>,
+pub struct SequencePart<'a, T, I, P> {
+    parent_sequence: &'a Sequence<T, I, WithTransitionFunction<T, I>>,
     state: P,
     iter_index: usize,
 }
 
-impl<'a, T> SequencePart<'a, T, AliveElements> {
+impl<'a, T, I> SequencePart<'a, T, I, AliveElements> {
     /// Create a new instance that represents the alive elements
     pub(super) fn new(
-        parent_sequence: &'a Sequence<T, WithInitialElements, WithTransitionFunction<T>>,
-    ) -> SequencePart<'a, T, AliveElements> {
+        parent_sequence: &'a Sequence<T, I, WithTransitionFunction<T, I>>,
+    ) -> SequencePart<'a, T, I, AliveElements> {
         SequencePart {
             parent_sequence,
             state: AliveElements,
@@ -62,13 +62,13 @@ impl<'a, T> SequencePart<'a, T, AliveElements> {
     }
 }
 
-impl<'a, T> SequencePart<'a, T, Range> {
+impl<'a, T, I> SequencePart<'a, T, I, Range> {
     /// Create a new instance that represents a range of a sequence
     pub(super) fn new_range(
-        parent_sequence: &'a Sequence<T, WithInitialElements, WithTransitionFunction<T>>,
+        parent_sequence: &'a Sequence<T, I, WithTransitionFunction<T, I>>,
         start: usize,
         end: usize,
-    ) -> SequencePart<'a, T, Range> {
+    ) -> SequencePart<'a, T, I, Range> {
         SequencePart {
             parent_sequence,
             state: Range::new(start, end),
@@ -91,7 +91,7 @@ impl<'a, T> SequencePart<'a, T, Range> {
     }
 }
 
-impl<'a, T: Clone> Iterator for SequencePart<'a, T, AliveElements> {
+impl<'a, T: Clone, I> Iterator for SequencePart<'a, T, I, AliveElements> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -107,7 +107,7 @@ impl<'a, T: Clone> Iterator for SequencePart<'a, T, AliveElements> {
     }
 }
 
-impl<'a, T: Clone> Iterator for SequencePart<'a, T, Range> {
+impl<'a, T: Clone, I> Iterator for SequencePart<'a, T, I, Range> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
