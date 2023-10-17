@@ -25,7 +25,7 @@ pub trait SharedSequenceBehavior {
     /// Pre generate elements of Sequence
     fn pre_generate(self, number_of_elements: usize) -> Self;
 
-     /// Removes all generated elements
+    /// Removes all generated elements
     fn clear(&mut self);
 }
 
@@ -50,7 +50,10 @@ impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
 
 impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
     /// Adds initial elements to Sequence
-    pub fn initial_elements(self, initial_elements: Vec<T>) -> Sequence<T, WithInitialElements, WithoutTransitionFunction> {
+    pub fn initial_elements(
+        self,
+        initial_elements: Vec<T>,
+    ) -> Sequence<T, WithInitialElements, WithoutTransitionFunction> {
         let initial_elements_len = initial_elements.len();
         let alive_elements = initial_elements
             .into_iter()
@@ -158,7 +161,9 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     }
 }
 
-impl<T> SharedSequenceBehavior for Sequence<T, WithInitialElements, WithTransitionFunction<T, WithInitialElements>> {
+impl<T> SharedSequenceBehavior
+    for Sequence<T, WithInitialElements, WithTransitionFunction<T, WithInitialElements>>
+{
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
         self.generate_nth_element(number_of_elements - 1 + self.initial_elements_len());
         self
@@ -175,7 +180,9 @@ impl<T> SharedSequenceBehavior for Sequence<T, WithInitialElements, WithTransiti
     }
 }
 
-impl<T> SharedSequenceBehavior for Sequence<T, WithoutInitialElements, WithTransitionFunction<T, WithoutInitialElements>> {
+impl<T> SharedSequenceBehavior
+    for Sequence<T, WithoutInitialElements, WithTransitionFunction<T, WithoutInitialElements>>
+{
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
         self.generate_nth_element(number_of_elements - 1);
         self
