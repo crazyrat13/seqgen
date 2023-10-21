@@ -9,8 +9,8 @@
 
 #![deny(missing_docs)]
 #![doc(
-    html_logo_url = "/seqgen_logo.svg",
-    html_favicon_url = "/seqgen_logo.svg"
+    html_logo_url = "https://raw.githubusercontent.com/crazyrat13/seqgen/main/assets/seqgen_logo.svg",
+    html_favicon_url = "https://raw.githubusercontent.com/crazyrat13/seqgen/main/assets/seqgen_logo.svg"
 )]
 
 pub mod error;
