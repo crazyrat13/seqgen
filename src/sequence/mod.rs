@@ -21,6 +21,7 @@ pub struct Sequence<T, I, F> {
     iter_index: usize,
 }
 
+/// Shared behavior between Sequence
 pub trait SharedSequenceBehavior {
     /// Pre generate elements of Sequence
     fn pre_generate(self, number_of_elements: usize) -> Self;

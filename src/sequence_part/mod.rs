@@ -3,9 +3,8 @@
 
 pub mod states;
 
-use states::*;
-
 use super::sequence::{states::*, Sequence};
+use states::*;
 
 /// This type represents a part of a sequence.
 /// it could be the alive elements or a range of the sequence

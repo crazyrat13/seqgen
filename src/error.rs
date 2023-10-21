@@ -2,7 +2,9 @@
 
 use std::fmt::Debug;
 
+/// Range error kind
 pub enum RangeErrorKind {
+    /// Represents an invalid range (start of range greater than its end)
     InvalidRange,
 }
 
@@ -14,12 +16,14 @@ impl Debug for RangeErrorKind {
     }
 }
 
+/// Range error
 pub struct RangeError {
     kind: RangeErrorKind,
 }
 
 impl RangeError {
-    pub fn new(kind: RangeErrorKind) -> Self {
+    /// creates new range error
+    pub(crate) fn new(kind: RangeErrorKind) -> Self {
         Self { kind }
     }
 }

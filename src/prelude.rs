@@ -5,7 +5,6 @@ use crate::sequence::types::TransitionFunction;
 pub use crate::sequence::{states::*, Sequence, SharedSequenceBehavior};
 pub use crate::sequence_part::{states::*, SequencePart};
 
-
 /// Create new sequence that do not require initial elements
 pub fn seq_without_initial_elements<T>(
     transition_function: TransitionFunction<T, WithoutInitialElements>,
