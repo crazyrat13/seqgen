@@ -4,8 +4,8 @@ fn main() {
 
     let res = std::env::current_dir();
     match res {
-        Ok(path) => path.into_os_string().into_string().unwrap(),
-        Err(_) => "FAILED".to_string(),
+        Ok(path) => println!("{}", path.into_os_string().into_string().unwrap()),
+        Err(_) => (),
     };
 
     std::fs::copy("assets/seqgen_logo.svg", "target/doc/seqgen_logo.svg")
