@@ -8,6 +8,6 @@ fn main() {
         Err(_) => (),
     };
 
-    std::fs::copy("assets/seqgen_logo.svg", "target/doc/seqgen_logo.svg")
+    std::fs::copy("../../../assets/seqgen_logo.svg", "target/doc/seqgen_logo.svg")
         .expect("Failed to copy crate logo when building documentation.");
 }
