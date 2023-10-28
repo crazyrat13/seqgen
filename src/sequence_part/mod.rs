@@ -1,5 +1,9 @@
 //! This module defines the SequencePart type
-//! that represents a part of a Sequence type
+//! that represents a part of a Sequence type.
+
+//! A sequence part could alive elements part
+//! that represents the alive elements of the sequence
+//! or range part (custom range) that represents a range of a sequence.
 
 pub mod states;
 pub mod types;
