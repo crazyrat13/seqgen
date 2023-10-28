@@ -1,6 +1,7 @@
 //! This module defines the states of the Sequence type
 
 use super::types::TransitionFunction;
+use super::Sequence;
 use crate::sequence_part::{states::AliveElements, SequencePart};
 
 /// A type that represents when the state
@@ -49,7 +50,10 @@ impl<T, I> WithTransitionFunction<T, I> {
     /// Runs the transition function
     pub fn run(
         &self,
-        alive_elements_part: SequencePart<'_, T, I, AliveElements>,
+        alive_elements_part: SequencePart<
+            AliveElements,
+            &Sequence<T, I, WithTransitionFunction<T, I>>,
+        >,
         current_element_index: usize,
     ) -> T {
         (self.0)(alive_elements_part, current_element_index)

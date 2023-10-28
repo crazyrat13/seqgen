@@ -4,12 +4,11 @@
 pub mod states;
 pub mod types;
 
+use crate::sequence_part::types::RangeResult;
+
 use self::{states::*, types::TransitionFunction};
-use super::error::{RangeError, RangeErrorKind};
-use super::sequence_part::{
-    states::{AliveElements, Range},
-    SequencePart,
-};
+use super::sequence_part::{states::AliveElements, SequencePart};
+use crate::error::{RangeError, RangeErrorKind};
 
 /// A type that represents a sequence.
 /// the Sequence type uses Vec to store its elements, so the max number of elements
@@ -103,7 +102,7 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         index < self.alive_elements_len()
     }
 
-    /// Generates the nth element (and all the preceding elements)
+    /// Generates the nth element and all the preceding elements.
     fn generate_nth_element(&mut self, nth_element: usize) {
         if !self.nth_element_is_alive(nth_element) {
             let alive_elements_len = self.alive_elements_len();
@@ -140,22 +139,16 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     }
 
     /// Returns a sequence part that represents the alive elements
-    pub fn alive_elements(&self) -> SequencePart<'_, T, I, AliveElements> {
+    pub fn alive_elements(
+        &self,
+    ) -> SequencePart<AliveElements, &Sequence<T, I, WithTransitionFunction<T, I>>> {
         SequencePart::new(self)
     }
 
     /// Returns a sequence part that represents a range of sequence
-    pub fn range(
-        &mut self,
-        start: usize,
-        end: usize,
-    ) -> Result<SequencePart<'_, T, I, Range>, RangeError> {
+    pub fn range(&mut self, start: usize, end: usize) -> RangeResult<'_, T, I> {
         if start > end {
             return Err(RangeError::new(RangeErrorKind::InvalidRange));
-        }
-
-        if !self.nth_element_is_alive(end) && start != end {
-            self.generate_nth_element(end)
         }
 
         Ok(SequencePart::new_range(self, start, end))

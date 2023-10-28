@@ -2,24 +2,40 @@
 //! that represents a part of a Sequence type
 
 pub mod states;
+pub mod types;
 
-use super::sequence::{states::*, Sequence};
 use states::*;
+use types::{AliveElementsPart, ParentSequenceRef, ParentSequenceRefMut, RangePart};
 
 /// This type represents a part of a sequence.
 /// it could be the alive elements or a range of the sequence
 /// This type is used only to read from not to write to the sequence
-pub struct SequencePart<'a, T, I, P> {
-    parent_sequence: &'a Sequence<T, I, WithTransitionFunction<T, I>>,
+pub struct SequencePart<P, S> {
+    parent_sequence: S,
     state: P,
     iter_index: usize,
 }
 
-impl<'a, T, I> SequencePart<'a, T, I, AliveElements> {
+/// Shared behavior between Range and AliveElements
+pub trait SharedSequencePartBehavior<T> {
+    /// Returns the length of the sequence part.
+    fn len(&self) -> usize;
+
+    /// Checks if the sequence part is empty.
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    /// Returns the first element of the sequence part.
+    fn first_element(&mut self) -> Option<&T>;
+
+    /// Returns the last element of the sequence part.
+    fn last_element(&mut self) -> Option<&T>;
+}
+
+impl<'a, T, I> AliveElementsPart<'a, T, I> {
     /// Create a new instance that represents the alive elements
-    pub(super) fn new(
-        parent_sequence: &'a Sequence<T, I, WithTransitionFunction<T, I>>,
-    ) -> SequencePart<'a, T, I, AliveElements> {
+    pub(super) fn new(parent_sequence: ParentSequenceRef<'a, T, I>) -> AliveElementsPart<'a, T, I> {
         SequencePart {
             parent_sequence,
             state: AliveElements,
@@ -27,47 +43,19 @@ impl<'a, T, I> SequencePart<'a, T, I, AliveElements> {
         }
     }
 
-    /// Returns the length of the alive elements of the sequence
-    pub fn len(&self) -> usize {
-        self.parent_sequence.alive_elements_len()
-    }
-
-    /// Checks if the alive elements are empty
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
     /// Returns the nth elements of the alive elements
     pub fn nth_element(&self, index: usize) -> Option<&T> {
         self.parent_sequence.nth_element_without_generation(index)
     }
-
-    /// Returns the first elements of the alive elements
-    pub fn first_element(&self) -> Option<&T> {
-        if self.is_empty() {
-            return None;
-        }
-
-        self.nth_element(0)
-    }
-
-    /// Returns the last elements of the alive elements
-    pub fn last_element(&self) -> Option<&T> {
-        if self.is_empty() {
-            return None;
-        }
-
-        self.nth_element(self.len() - 1)
-    }
 }
 
-impl<'a, T, I> SequencePart<'a, T, I, Range> {
+impl<'a, T, I> RangePart<'a, T, I> {
     /// Create a new instance that represents a range of a sequence
     pub(super) fn new_range(
-        parent_sequence: &'a Sequence<T, I, WithTransitionFunction<T, I>>,
+        parent_sequence: ParentSequenceRefMut<'a, T, I>,
         start: usize,
         end: usize,
-    ) -> SequencePart<'a, T, I, Range> {
+    ) -> RangePart<'a, T, I> {
         SequencePart {
             parent_sequence,
             state: Range::new(start, end),
@@ -75,22 +63,50 @@ impl<'a, T, I> SequencePart<'a, T, I, Range> {
         }
     }
 
-    /// Returns the nth elements of the range
-    pub fn nth_element(&self, index: usize) -> Option<&T> {
+    /// Check if the element is in the range
+    pub fn nth_element_is_in_range(&self, index: usize) -> bool {
+        index >= self.state.start() && index < self.state.end()
+    }
+
+    /// Returns the nth elements of the range part
+    pub fn nth_element(&mut self, index: usize) -> Option<&T> {
         if !self.nth_element_is_in_range(index) {
             return None;
         }
 
-        self.parent_sequence.nth_element_without_generation(index)
-    }
-
-    /// Checks if the nth element is in range
-    pub fn nth_element_is_in_range(&self, index: usize) -> bool {
-        index >= self.state.start() && index < self.state.end()
+        Some(self.parent_sequence.nth_element(index))
     }
 }
 
-impl<'a, T: Clone, I> Iterator for SequencePart<'a, T, I, AliveElements> {
+impl<'a, T, I> SharedSequencePartBehavior<T> for AliveElementsPart<'a, T, I> {
+    fn len(&self) -> usize {
+        self.parent_sequence.alive_elements_len()
+    }
+
+    fn first_element(&mut self) -> Option<&T> {
+        self.nth_element(0)
+    }
+
+    fn last_element(&mut self) -> Option<&T> {
+        self.nth_element(self.len() - 1)
+    }
+}
+
+impl<'a, T, I> SharedSequencePartBehavior<T> for RangePart<'a, T, I> {
+    fn len(&self) -> usize {
+        self.state.end() - self.state.start()
+    }
+
+    fn first_element(&mut self) -> Option<&T> {
+        self.nth_element(self.state.start())
+    }
+
+    fn last_element(&mut self) -> Option<&T> {
+        self.nth_element(self.state.end())
+    }
+}
+
+impl<'a, T: Clone, I> Iterator for AliveElementsPart<'a, T, I> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -106,7 +122,7 @@ impl<'a, T: Clone, I> Iterator for SequencePart<'a, T, I, AliveElements> {
     }
 }
 
-impl<'a, T: Clone, I> Iterator for SequencePart<'a, T, I, Range> {
+impl<'a, T: Clone, I> Iterator for RangePart<'a, T, I> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
