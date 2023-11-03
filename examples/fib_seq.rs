@@ -7,7 +7,7 @@ fn main() {
             alive_elements.nth_element(current_index - 1).unwrap()
                 + alive_elements.nth_element(current_index - 2).unwrap()
         })
-        .pre_generate(185);
+        .pre_generate(185); // more than 185 will cause u128 overflow
 
     fib_seq
         .alive_elements()

@@ -13,7 +13,7 @@ pub struct Range {
 
 impl Range {
     /// Create new instance
-    pub fn new(start: usize, end: usize) -> Self {
+    pub(crate) fn new(start: usize, end: usize) -> Self {
         Self { start, end }
     }
 

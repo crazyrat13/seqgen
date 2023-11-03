@@ -1,26 +1,30 @@
 //! This module defines the SequencePart type
 //! that represents a part of a Sequence type.
-
-//! A sequence part could alive elements part
-//! that represents the alive elements of the sequence
+//!
+//! A sequence part could be alive elements part
+//! that represents the alive elements of the sequence (Generated elements)
 //! or range part (custom range) that represents a range of a sequence.
+//!
+//! The range parts are lazy and can mutate the sequence.
+//! The alive part can not mutate the sequence.
 
-pub mod states;
-pub mod types;
+pub(crate) mod states;
+pub(crate) mod types;
+
+pub mod error;
 
 use states::*;
 use types::{AliveElementsPart, ParentSequenceRef, ParentSequenceRefMut, RangePart};
 
 /// This type represents a part of a sequence.
-/// it could be the alive elements or a range of the sequence
-/// This type is used only to read from not to write to the sequence
+/// it could be the alive elements or a range of the sequence.
 pub struct SequencePart<P, S> {
+    part: P,
     parent_sequence: S,
-    state: P,
     iter_index: usize,
 }
 
-/// Shared behavior between Range and AliveElements
+/// Shared behavior between range part and alive elements part.
 pub trait SharedSequencePartBehavior<T> {
     /// Returns the length of the sequence part.
     fn len(&self) -> usize;
@@ -42,7 +46,7 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
     pub(super) fn new(parent_sequence: ParentSequenceRef<'a, T, I>) -> AliveElementsPart<'a, T, I> {
         SequencePart {
             parent_sequence,
-            state: AliveElements,
+            part: AliveElements,
             iter_index: 0,
         }
     }
@@ -62,14 +66,14 @@ impl<'a, T, I> RangePart<'a, T, I> {
     ) -> RangePart<'a, T, I> {
         SequencePart {
             parent_sequence,
-            state: Range::new(start, end),
+            part: Range::new(start, end),
             iter_index: start,
         }
     }
 
     /// Check if the element is in the range
     pub fn nth_element_is_in_range(&self, index: usize) -> bool {
-        index >= self.state.start() && index < self.state.end()
+        index >= self.part.start() && index < self.part.end()
     }
 
     /// Returns the nth elements of the range part
@@ -98,15 +102,15 @@ impl<'a, T, I> SharedSequencePartBehavior<T> for AliveElementsPart<'a, T, I> {
 
 impl<'a, T, I> SharedSequencePartBehavior<T> for RangePart<'a, T, I> {
     fn len(&self) -> usize {
-        self.state.end() - self.state.start()
+        self.part.end() - self.part.start()
     }
 
     fn first_element(&mut self) -> Option<&T> {
-        self.nth_element(self.state.start())
+        self.nth_element(self.part.start())
     }
 
     fn last_element(&mut self) -> Option<&T> {
-        self.nth_element(self.state.end())
+        self.nth_element(self.part.end())
     }
 }
 
@@ -132,7 +136,7 @@ impl<'a, T: Clone, I> Iterator for RangePart<'a, T, I> {
     fn next(&mut self) -> Option<Self::Item> {
         let iter_index = self.iter_index;
 
-        if iter_index == self.state.end() {
+        if iter_index == self.part.end() {
             self.iter_index = 0;
             return None;
         }

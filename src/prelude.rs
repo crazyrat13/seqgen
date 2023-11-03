@@ -1,9 +1,8 @@
 //! Prelude for the library
 
-pub use crate::error::RangeError;
-use crate::sequence::types::*;
-pub use crate::sequence::{states::*, Sequence, SharedSequenceBehavior};
-pub use crate::sequence_part::{states::*, SequencePart, SharedSequencePartBehavior};
+use crate::sequence::{states::*, types::*};
+pub use crate::sequence::{Sequence, SharedSequenceBehavior};
+pub use crate::sequence_part::{error::*, SequencePart, SharedSequencePartBehavior};
 
 /// Create new sequence that do not require initial elements
 pub fn seq_without_initial_elements<T>(

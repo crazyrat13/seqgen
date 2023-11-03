@@ -2,7 +2,7 @@
 
 use super::states::{AliveElements, Range};
 use super::SequencePart;
-use crate::error::RangeError;
+use super::error::RangeError;
 use crate::sequence::{states::WithTransitionFunction, Sequence};
 
 /// An immutable reference to the parent sequence.

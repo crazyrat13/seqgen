@@ -1,18 +1,18 @@
 //! This module defines the Sequence type
 //! and it is the core of this library
 
-pub mod states;
-pub mod types;
-
-use crate::sequence_part::types::RangeResult;
-
 use self::{states::*, types::TransitionFunction};
+use super::sequence_part::error::{RangeError, RangeErrorKind};
+use super::sequence_part::types::RangeResult;
 use super::sequence_part::{states::AliveElements, SequencePart};
-use crate::error::{RangeError, RangeErrorKind};
+
+pub(crate) mod states;
+pub(crate) mod types;
 
 /// A type that represents a sequence.
-/// the Sequence type uses Vec to store its elements, so the max number of elements
-/// it can hold is std::usize::MAX, that's enough for most of us :)
+/// the Sequence type uses Vec to store its elements,
+/// so the max number of elements
+/// it can hold is std::usize::MAX.
 pub struct Sequence<T, I, F> {
     initial_elements: I,
     trans_func: F,
@@ -20,7 +20,8 @@ pub struct Sequence<T, I, F> {
     iter_index: usize,
 }
 
-/// Shared behavior between Sequence
+/// Shared behavior between sequences with initial element
+/// and sequences that do not require initial element.
 pub trait SharedSequenceBehavior {
     /// Pre generate elements of Sequence
     fn pre_generate(self, number_of_elements: usize) -> Self;
@@ -30,7 +31,7 @@ pub trait SharedSequenceBehavior {
 }
 
 impl<T> Default for Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
-    /// Creates a default instance of Sequence
+    /// Creates a default instance of Sequence (Undefined Sequence)
     fn default() -> Self {
         Self {
             initial_elements: WithoutInitialElements,
@@ -42,7 +43,7 @@ impl<T> Default for Sequence<T, WithoutInitialElements, WithoutTransitionFunctio
 }
 
 impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
-    /// Creates a new instance of Sequence
+    /// Creates a new instance of Sequence which is an undefined Sequence.
     pub fn new() -> Self {
         Sequence::default()
     }
@@ -102,8 +103,8 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         index < self.alive_elements_len()
     }
 
-    /// Generates the nth element and all the preceding elements.
-    fn generate_nth_element(&mut self, nth_element: usize) {
+    /// Generates the nth element and all the preceding elements and stores them in the sequence.
+    fn generate_nth_element_store(&mut self, nth_element: usize) {
         if !self.nth_element_is_alive(nth_element) {
             let alive_elements_len = self.alive_elements_len();
 
@@ -122,7 +123,7 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     /// This method generate the nth elements if it is dead before returning its reference
     pub fn nth_element(&mut self, index: usize) -> &T {
         if !self.nth_element_is_alive(index) {
-            self.generate_nth_element(index);
+            self.generate_nth_element_store(index);
         }
 
         &self.alive_elements[index]
@@ -148,7 +149,7 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     /// Returns a sequence part that represents a range of sequence
     pub fn range(&mut self, start: usize, end: usize) -> RangeResult<'_, T, I> {
         if start > end {
-            return Err(RangeError::new(RangeErrorKind::InvalidRange));
+            return Err(RangeError::new(RangeErrorKind::InvalidRange { start, end }));
         }
 
         Ok(SequencePart::new_range(self, start, end))
@@ -159,7 +160,9 @@ impl<T> SharedSequenceBehavior
     for Sequence<T, WithInitialElements, WithTransitionFunction<T, WithInitialElements>>
 {
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
-        self.generate_nth_element(number_of_elements - 1 + self.initial_elements_len());
+        let initial_elements_len = self.initial_elements_len();
+        let last_generated_element = number_of_elements - 1 + initial_elements_len;
+        self.generate_nth_element_store(last_generated_element);
         self
     }
 
@@ -178,7 +181,7 @@ impl<T> SharedSequenceBehavior
     for Sequence<T, WithoutInitialElements, WithTransitionFunction<T, WithoutInitialElements>>
 {
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
-        self.generate_nth_element(number_of_elements - 1);
+        self.generate_nth_element_store(number_of_elements - 1);
         self
     }
 
