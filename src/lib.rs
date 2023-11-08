@@ -3,7 +3,7 @@
 //! from the currently generated elements to next element to be generated in a lazy fashion
 //! this means that the elements won't be generated unless explicitly requested or used.
 //! 
-//! seqgen does not only work with sequences of numbers, it works with any data type,
+//! SeqGen does not only work with sequences of numbers, it works with any data type,
 //! sequence elements can be strings, images, other sequences, etc...
 //! 
 //! The sequences implements the Iterator trait so that they can be manipulated

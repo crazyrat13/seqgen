@@ -33,12 +33,6 @@ pub trait SharedSequencePartBehavior<T> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
-
-    /// Returns the first element of the sequence part.
-    fn first_element(&mut self) -> Option<&T>;
-
-    /// Returns the last element of the sequence part.
-    fn last_element(&mut self) -> Option<&T>;
 }
 
 impl<'a, T, I> AliveElementsPart<'a, T, I> {
@@ -54,6 +48,20 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
     /// Returns the nth elements of the alive elements
     pub fn nth_element(&self, index: usize) -> Option<&T> {
         self.parent_sequence.nth_element_without_generation(index)
+    }
+
+    /// Returns the first element of the alive part.
+    pub fn first_element(&self) -> Option<&T> {
+        self.nth_element(0)
+    }
+
+    /// Returns the last element of the alive part.
+    pub fn last_element(&self) -> Option<&T> {
+        if self.is_empty() {
+            return None;
+        }
+
+        self.nth_element(self.len() - 1)
     }
 }
 
@@ -84,33 +92,27 @@ impl<'a, T, I> RangePart<'a, T, I> {
 
         Some(self.parent_sequence.nth_element(index))
     }
+
+    /// Returns the first element of the range part.
+    pub fn first_element(&mut self) -> Option<&T> {
+        self.nth_element(self.part.start())
+    }
+
+    /// Returns the last element of the range part.
+    pub fn last_element(&mut self) -> Option<&T> {
+        self.nth_element(self.part.end())
+    }
 }
 
 impl<'a, T, I> SharedSequencePartBehavior<T> for AliveElementsPart<'a, T, I> {
     fn len(&self) -> usize {
         self.parent_sequence.alive_elements_len()
     }
-
-    fn first_element(&mut self) -> Option<&T> {
-        self.nth_element(0)
-    }
-
-    fn last_element(&mut self) -> Option<&T> {
-        self.nth_element(self.len() - 1)
-    }
 }
 
 impl<'a, T, I> SharedSequencePartBehavior<T> for RangePart<'a, T, I> {
     fn len(&self) -> usize {
         self.part.end() - self.part.start()
-    }
-
-    fn first_element(&mut self) -> Option<&T> {
-        self.nth_element(self.part.start())
-    }
-
-    fn last_element(&mut self) -> Option<&T> {
-        self.nth_element(self.part.end())
     }
 }
 
