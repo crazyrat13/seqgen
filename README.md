@@ -24,7 +24,7 @@ $ cargo add seqgen
 Or add this under <code>[[dependencies]]</code> in <code>Cargo.toml</code> file
 
 ```toml
-seqgen = "0.2.10"
+seqgen = "0.2.11"
 ```
 
 ### Examples:
@@ -99,5 +99,7 @@ fn main() {
     }
 }
 ```
+
+See more examples on the [examples folder](https://github.com/crazyrat13/seqgen/tree/main/examples).
 
 Have suggestions? [contribute to the project or open an issue on GitHub](https://github.com/crazyrat13/seqgen).
