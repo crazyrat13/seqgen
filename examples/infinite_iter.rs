@@ -1,8 +1,7 @@
-// use seqgen::prelude::seq_without_initial_elements;
-use seqgen::prelude::*;
+use seqgen::prelude::Sequence;
 
 fn main() {
     Sequence::new()
         .transition_function(|_, i| i)
-        .for_each(|element| println!("{element}"))
+        .for_each(|e| println!("{e}"))
 }

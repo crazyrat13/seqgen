@@ -1,9 +1,13 @@
 //! This module defines errors for sequence part
 
-use std::fmt::Debug;
+use std::{
+    error::Error,
+    fmt::{Debug, Display},
+};
 
-/// Range error kind
-pub enum RangeErrorKind {
+/// Range error happens when we try to get an invalid range from a sequence using Sequence::range.
+/// Example of this error could be trying to get a range where its end is less then its start
+pub enum RangeError {
     /// Represents an invalid range (start of range greater than its end)
     InvalidRange {
         /// Start of the range
@@ -13,35 +17,26 @@ pub enum RangeErrorKind {
     },
 }
 
-impl Debug for RangeErrorKind {
+impl Error for RangeError {}
+
+impl Debug for RangeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::InvalidRange { start, end } => write!(
-                f,
-                "InvalidRange: Start of range is greater than its end: start: {start} > end: {end}",
-            ),
+            RangeError::InvalidRange { start, end } => f
+                .debug_struct("InvalidRange")
+                .field("start", start)
+                .field("end", end)
+                .finish(),
         }
     }
 }
 
-/// Range error happens when we try to get an invalid range from a sequence using Sequence::range.
-/// Example of this error could be trying to get a range where its end is less then its start
-pub struct RangeError {
-    /// The kind of range error
-    pub kind: RangeErrorKind,
-}
-
-impl RangeError {
-    /// creates new range error
-    pub(crate) fn new(kind: RangeErrorKind) -> Self {
-        Self { kind }
-    }
-}
-
-impl Debug for RangeError {
+impl Display for RangeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("RangeError")
-            .field("kind", &self.kind)
-            .finish()
+        match self {
+            RangeError::InvalidRange { start, end } => {
+                write!(f, "Range start ({start}) is greater than its end ({end}).")
+            }
+        }
     }
 }

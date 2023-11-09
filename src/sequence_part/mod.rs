@@ -13,8 +13,10 @@ pub(crate) mod types;
 
 pub mod error;
 
-use states::*;
-use types::{AliveElementsPart, ParentSequenceRef, ParentSequenceRefMut, RangePart};
+use self::{
+    states::*,
+    types::{AliveElementsPart, ParentSequenceRef, ParentSequenceRefMut, RangePart},
+};
 
 /// This type represents a part of a sequence.
 /// it could be the alive elements or a range of the sequence.

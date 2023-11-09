@@ -1,13 +1,14 @@
 //! This module defines the Sequence type
 //! and it is the core of this library
 
-use self::{states::*, types::TransitionFunction};
-use super::sequence_part::error::{RangeError, RangeErrorKind};
-use super::sequence_part::types::RangeResult;
-use super::sequence_part::{states::AliveElements, SequencePart};
-
 pub(crate) mod states;
 pub(crate) mod types;
+
+use self::{states::*, types::TransitionFunction};
+
+use crate::sequence_part::{
+    error::RangeError, states::AliveElements, types::RangeResult, SequencePart,
+};
 
 /// A type that represents a sequence.
 /// the Sequence type uses Vec to store its elements,
@@ -104,7 +105,7 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     }
 
     /// Generates the nth element and all the preceding elements and stores them in the sequence.
-    fn generate_nth_element_store(&mut self, nth_element: usize) {
+    fn generate_nth_element(&mut self, nth_element: usize) {
         if !self.nth_element_is_alive(nth_element) {
             let alive_elements_len = self.alive_elements_len();
 
@@ -122,16 +123,13 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     /// Returns a reference to the nth element if it is alive.
     /// This method generate the nth elements if it is dead before returning its reference
     pub fn nth_element(&mut self, index: usize) -> &T {
-        if !self.nth_element_is_alive(index) {
-            self.generate_nth_element_store(index);
-        }
-
+        self.generate_nth_element(index);
         &self.alive_elements[index]
     }
 
     /// Returns a reference to the nth element if it is alive in a Some variant
     /// This method does not generate the nth elements if it is dead it just returns None
-    pub(super) fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
+    pub(crate) fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
         if !self.nth_element_is_alive(index) {
             return None;
         }
@@ -149,7 +147,7 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     /// Returns a sequence part that represents a range of sequence
     pub fn range(&mut self, start: usize, end: usize) -> RangeResult<'_, T, I> {
         if start > end {
-            return Err(RangeError::new(RangeErrorKind::InvalidRange { start, end }));
+            return Err(RangeError::InvalidRange { start, end });
         }
 
         Ok(SequencePart::new_range(self, start, end))
@@ -162,7 +160,7 @@ impl<T> SharedSequenceBehavior
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
         let initial_elements_len = self.initial_elements_len();
         let last_generated_element = number_of_elements - 1 + initial_elements_len;
-        self.generate_nth_element_store(last_generated_element);
+        self.generate_nth_element(last_generated_element);
         self
     }
 
@@ -181,7 +179,7 @@ impl<T> SharedSequenceBehavior
     for Sequence<T, WithoutInitialElements, WithTransitionFunction<T, WithoutInitialElements>>
 {
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
-        self.generate_nth_element_store(number_of_elements - 1);
+        self.generate_nth_element(number_of_elements - 1);
         self
     }
 

@@ -2,10 +2,12 @@
 
 /// A type that represents the state of SequencePart
 /// when its used to represents the alive elements of the sequence
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct AliveElements;
 
 // A type that represents the state of SequencePart
 /// when its used to represents a range of the sequence
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Range {
     start: usize,
     end: usize,

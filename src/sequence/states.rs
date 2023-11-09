@@ -1,15 +1,17 @@
 //! This module defines the states of the Sequence type
 
-use super::types::TransitionFunction;
-use super::Sequence;
+use super::{types::TransitionFunction, Sequence};
+
 use crate::sequence_part::{states::AliveElements, SequencePart};
 
 /// A type that represents when the state
 /// has no initial elements
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WithoutInitialElements;
 
 /// A type that represents when the state
 /// has initial elements
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WithInitialElements(usize);
 
 impl WithInitialElements {
@@ -35,10 +37,12 @@ impl WithInitialElements {
 
 /// A type that represents when the state
 /// has no transition function
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WithoutTransitionFunction;
 
 /// A type that represents when the state
 /// has transition function
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WithTransitionFunction<T, I>(TransitionFunction<T, I>);
 
 impl<T, I> WithTransitionFunction<T, I> {
