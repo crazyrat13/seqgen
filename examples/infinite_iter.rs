@@ -1,7 +1,7 @@
+//! Infinite iterator over a sequence example.
+
 use seqgen::prelude::Sequence;
 
 fn main() {
-    Sequence::new()
-        .transition_function(|_, i| i)
-        .for_each(|e| println!("{e}"))
+    Sequence::linear_seq().for_each(|e| println!("{e}"))
 }

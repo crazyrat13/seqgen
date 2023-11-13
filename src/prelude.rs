@@ -4,7 +4,7 @@ use crate::sequence::{states::*, types::*};
 
 pub use crate::{
     sequence::{Sequence, SharedSequenceBehavior},
-    sequence_part::{error::*, SequencePart, SharedSequencePartBehavior},
+    sequence_part::{error::RangeError, SequencePart, SharedSequencePartBehavior},
 };
 
 /// Create new sequence that do not require initial elements

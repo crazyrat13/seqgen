@@ -1,7 +1,9 @@
+//! A range of a sequence example.
+
 use seqgen::prelude::*;
 
 fn main() {
-    let mut seq = Sequence::new().transition_function(|_, current_index| current_index);
+    let mut seq = Sequence::linear_seq();
     let range_res = seq.range(10000000, 10000000000);
 
     match range_res {

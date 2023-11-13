@@ -17,8 +17,6 @@ pub enum RangeError {
     },
 }
 
-impl Error for RangeError {}
-
 impl Debug for RangeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -40,3 +38,5 @@ impl Display for RangeError {
         }
     }
 }
+
+impl Error for RangeError {}

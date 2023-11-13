@@ -1,9 +1,11 @@
+//! A basic benchmark example.
+
 use std::time::SystemTime;
 
 use seqgen::prelude::*;
 
 fn main() {
-    let mut seq = Sequence::new().transition_function(|_, current_index| current_index);
+    let mut seq = Sequence::linear_seq();
 
     let n = 1_000_000_000;
     let now = SystemTime::now();

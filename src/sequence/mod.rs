@@ -21,8 +21,8 @@ pub struct Sequence<T, I, F> {
     iter_index: usize,
 }
 
-/// Shared behavior between sequences with initial element
-/// and sequences that do not require initial element.
+/// Shared behavior between sequences that requires initial elements
+/// and sequences that do not require initial elements.
 pub trait SharedSequenceBehavior {
     /// Pre generate elements of Sequence
     fn pre_generate(self, number_of_elements: usize) -> Self;
@@ -151,6 +151,15 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         }
 
         Ok(SequencePart::new_range(self, start, end))
+    }
+}
+
+impl
+    Sequence<usize, WithoutInitialElements, WithTransitionFunction<usize, WithoutInitialElements>>
+{
+    /// Returns a linear sequence
+    pub fn linear_seq() -> Self {
+        Sequence::new().transition_function(|_, i| i)
     }
 }
 

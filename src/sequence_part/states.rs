@@ -15,17 +15,17 @@ pub struct Range {
 
 impl Range {
     /// Create new instance
-    pub(crate) fn new(start: usize, end: usize) -> Self {
+    pub(super) fn new(start: usize, end: usize) -> Self {
         Self { start, end }
     }
 
     /// Returns the start of the range
-    pub fn start(&self) -> usize {
+    pub(super) fn start(&self) -> usize {
         self.start
     }
 
     /// Returns the end of the range
-    pub fn end(&self) -> usize {
+    pub(super) fn end(&self) -> usize {
         self.end
     }
 }

@@ -1,3 +1,5 @@
+//! Fibonacci sequence example.
+
 use seqgen::prelude::*;
 
 fn main() {

@@ -68,7 +68,7 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
 }
 
 impl<'a, T, I> RangePart<'a, T, I> {
-    /// Create a new instance that represents a range of a sequence
+    /// Creates a new instance that represents a range of a sequence
     pub(super) fn new_range(
         parent_sequence: ParentSequenceRefMut<'a, T, I>,
         start: usize,
@@ -81,7 +81,7 @@ impl<'a, T, I> RangePart<'a, T, I> {
         }
     }
 
-    /// Check if the element is in the range
+    /// Checks if the element is in the range
     pub fn nth_element_is_in_range(&self, index: usize) -> bool {
         index >= self.part.start() && index < self.part.end()
     }
