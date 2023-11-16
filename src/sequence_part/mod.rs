@@ -47,6 +47,11 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
         }
     }
 
+    /// Returns a reference to the parent sequence.
+    pub fn parent_sequence(&self) -> ParentSequenceRef<'a, T, I> {
+        self.parent_sequence
+    }
+
     /// Returns the nth elements of the alive elements
     pub fn nth_element(&self, index: usize) -> Option<&T> {
         self.parent_sequence.nth_element_without_generation(index)

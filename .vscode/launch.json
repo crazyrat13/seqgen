@@ -1,0 +1,249 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'seqgen'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "seqgen",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'seqgen'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=seqgen",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "seqgen",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'seqgen'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=seqgen",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "seqgen",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'infinite_iter'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=infinite_iter",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "infinite_iter",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'infinite_iter'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=infinite_iter",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "infinite_iter",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'fib_seq'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=fib_seq",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "fib_seq",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'fib_seq'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=fib_seq",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "fib_seq",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'basic_bench'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=basic_bench",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "basic_bench",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'basic_bench'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=basic_bench",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "basic_bench",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'range_of_seq'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=range_of_seq",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "range_of_seq",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'range_of_seq'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=range_of_seq",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "range_of_seq",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'xy_seq'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=xy_seq",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "xy_seq",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'xy_seq'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=xy_seq",
+                    "--package=seqgen"
+                ],
+                "filter": {
+                    "name": "xy_seq",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

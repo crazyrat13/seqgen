@@ -167,9 +167,12 @@ impl<T> SharedSequenceBehavior
     for Sequence<T, WithInitialElements, WithTransitionFunction<T, WithInitialElements>>
 {
     fn pre_generate(mut self, number_of_elements: usize) -> Self {
-        let initial_elements_len = self.initial_elements_len();
-        let last_generated_element = number_of_elements - 1 + initial_elements_len;
-        self.generate_nth_element(last_generated_element);
+        if number_of_elements > 0 {
+            let initial_elements_len = self.initial_elements_len();
+            let last_generated_element = number_of_elements - 1 + initial_elements_len;
+            self.generate_nth_element(last_generated_element);
+        }
+
         self
     }
 
