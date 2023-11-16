@@ -27,11 +27,7 @@ impl WithInitialElements {
 
     /// Checks if the initial elements are empty
     pub fn is_empty(&self) -> bool {
-        if self.0 != 0 {
-            return false;
-        }
-
-        true
+        self.len() == 0
     }
 }
 
@@ -47,12 +43,17 @@ pub struct WithTransitionFunction<T, I>(TransitionFunction<T, I>);
 
 impl<T, I> WithTransitionFunction<T, I> {
     /// Create new instance
-    pub fn new(trans_func: TransitionFunction<T, I>) -> Self {
+    pub(super) fn new(trans_func: TransitionFunction<T, I>) -> Self {
         Self(trans_func)
     }
 
+    /// Returns the transition function.
+    pub(super) fn transition_function(&self) -> TransitionFunction<T, I> {
+        self.0
+    }
+
     /// Runs the transition function
-    pub fn run(
+    pub(super) fn run(
         &self,
         alive_elements_part: SequencePart<
             AliveElements,
@@ -60,6 +61,6 @@ impl<T, I> WithTransitionFunction<T, I> {
         >,
         current_element_index: usize,
     ) -> T {
-        (self.0)(alive_elements_part, current_element_index)
+        (self.transition_function())(alive_elements_part, current_element_index)
     }
 }
