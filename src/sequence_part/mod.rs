@@ -27,7 +27,7 @@ pub struct SequencePart<P, S> {
 }
 
 /// Shared behavior between range part and alive elements part.
-pub trait SharedSequencePartBehavior<T> {
+pub trait SharedSequencePartBehavior<'a, T, I> {
     /// Returns the length of the sequence part.
     fn len(&self) -> usize;
 
@@ -35,6 +35,9 @@ pub trait SharedSequencePartBehavior<T> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
+ 
+    /// Returns a reference to the parent sequence.
+    fn parent_sequence(&'a self) -> ParentSequenceRef<'a, T, I>;
 }
 
 impl<'a, T, I> AliveElementsPart<'a, T, I> {
@@ -111,15 +114,23 @@ impl<'a, T, I> RangePart<'a, T, I> {
     }
 }
 
-impl<'a, T, I> SharedSequencePartBehavior<T> for AliveElementsPart<'a, T, I> {
+impl<'a, T, I> SharedSequencePartBehavior<'a, T, I> for AliveElementsPart<'a, T, I> {
     fn len(&self) -> usize {
         self.parent_sequence.alive_elements_len()
     }
+
+    fn parent_sequence(&self) -> ParentSequenceRef<'a, T, I> {
+        self.parent_sequence
+    }
 }
 
-impl<'a, T, I> SharedSequencePartBehavior<T> for RangePart<'a, T, I> {
+impl<'a, T, I> SharedSequencePartBehavior<'a, T, I> for RangePart<'a, T, I> {
     fn len(&self) -> usize {
         self.part.end() - self.part.start()
+    }
+
+    fn parent_sequence(&'a self) -> ParentSequenceRef<'a, T, I> {
+        self.parent_sequence
     }
 }
 
