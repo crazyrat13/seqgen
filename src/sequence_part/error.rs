@@ -5,8 +5,8 @@ use std::{
     fmt::{Debug, Display},
 };
 
-/// Range error happens when we try to get an invalid range from a sequence using Sequence::range.
-/// Example of this error could be trying to get a range where its end is less then its start
+/// Range error happens when creating bad ranges.
+/// Example of this error could be trying to get a range where its end is less then its start.
 pub enum RangeError {
     /// Represents an invalid range (start of range greater than its end)
     InvalidRange {
