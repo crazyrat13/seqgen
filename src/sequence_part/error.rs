@@ -15,6 +15,8 @@ pub enum RangeError {
         /// End of the range
         end: usize,
     },
+    /// Requested range is dead
+    DeadRange,
 }
 
 impl Debug for RangeError {
@@ -25,6 +27,7 @@ impl Debug for RangeError {
                 .field("start", start)
                 .field("end", end)
                 .finish(),
+            RangeError::DeadRange => f.debug_struct("DeadRange").finish(),
         }
     }
 }
@@ -35,6 +38,7 @@ impl Display for RangeError {
             RangeError::InvalidRange { start, end } => {
                 write!(f, "Range start ({start}) is greater than its end ({end}).")
             }
+            RangeError::DeadRange => write!(f, "Requested range is dead.",),
         }
     }
 }

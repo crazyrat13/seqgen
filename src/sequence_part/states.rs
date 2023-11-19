@@ -28,4 +28,9 @@ impl Range {
     pub(super) fn end(&self) -> usize {
         self.end
     }
+
+    /// Checks if the element is in the range
+    pub fn nth_element_is_in_range(&self, index: usize) -> bool {
+        index >= self.start() && index < self.end()
+    }
 }

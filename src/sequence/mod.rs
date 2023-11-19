@@ -7,7 +7,10 @@ pub(crate) mod types;
 use self::{states::*, types::TransitionFunction};
 
 use crate::sequence_part::{
-    error::RangeError, states::AliveElements, types::RangeResult, SequencePart,
+    error::RangeError,
+    states::AliveElements,
+    types::{RangeMutResult, RangeResult},
+    SequencePart,
 };
 
 /// A type that represents a sequence.
@@ -120,6 +123,11 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         }
     }
 
+    /// Generates the specified number of elements
+    pub fn generate(&mut self, number_of_elements: usize) {
+        self.generate_nth_element(self.alive_elements_len() + number_of_elements - 1);
+    }
+
     /// Returns a reference to the nth element if it is alive.
     /// This method generate the nth elements if it is dead before returning its reference
     pub fn nth_element(&mut self, index: usize) -> &T {
@@ -144,13 +152,26 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         SequencePart::new(self)
     }
 
-    /// Returns a sequence part that represents a range of sequence
-    pub fn range(&mut self, start: usize, end: usize) -> RangeResult<'_, T, I> {
+    /// Returns a sequence part that represents an immutable range of sequence
+    pub fn range(&self, start: usize, end: usize) -> RangeResult<'_, T, I> {
         if start > end {
             return Err(RangeError::InvalidRange { start, end });
         }
 
+        if !self.nth_element_is_alive(end) {
+            return Err(RangeError::DeadRange);
+        }
+
         Ok(SequencePart::new_range(self, start, end))
+    }
+
+    /// Returns a sequence part that represents a mutable range of sequence
+    pub fn range_mut(&mut self, start: usize, end: usize) -> RangeMutResult<'_, T, I> {
+        if start > end {
+            return Err(RangeError::InvalidRange { start, end });
+        }
+
+        Ok(SequencePart::new_range_mut(self, start, end))
     }
 }
 

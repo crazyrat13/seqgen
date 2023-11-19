@@ -22,7 +22,7 @@ fn main() {
             next
         });
 
-    seq.range(0, 12)
+    seq.range_mut(0, 12)
         .unwrap()
         .for_each(|element| println!("{element}"));
 }

@@ -13,9 +13,14 @@ pub(crate) mod types;
 
 pub mod error;
 
+use std::usize;
+
 use self::{
     states::*,
-    types::{AliveElementsPart, ParentSequenceRef, ParentSequenceRefMut, RangePart},
+    types::{
+        AliveElementsPart, ParentSequenceRef, ParentSequenceRefMut, RangePartImmut,
+        RangePartMut,
+    },
 };
 
 /// This type represents a part of a sequence.
@@ -35,7 +40,7 @@ pub trait SharedSequencePartBehavior<'a, T, I> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
- 
+
     /// Returns a reference to the parent sequence.
     fn parent_sequence(&'a self) -> ParentSequenceRef<'a, T, I>;
 }
@@ -53,6 +58,11 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
     /// Returns a reference to the parent sequence.
     pub fn parent_sequence(&self) -> ParentSequenceRef<'a, T, I> {
         self.parent_sequence
+    }
+
+    /// Checks if the nth element is alive.
+    pub fn nth_element_is_alive(&self, index: usize) -> bool {
+        self.parent_sequence.nth_element_is_alive(index)
     }
 
     /// Returns the nth elements of the alive elements
@@ -75,27 +85,59 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
     }
 }
 
-impl<'a, T, I> RangePart<'a, T, I> {
-    /// Creates a new instance that represents a range of a sequence
-    pub(super) fn new_range(
-        parent_sequence: ParentSequenceRefMut<'a, T, I>,
+impl<'a, T, I> RangePartImmut<'a, T, I> {
+    pub(crate) fn new_range(
+        parent_sequence: ParentSequenceRef<'a, T, I>,
         start: usize,
         end: usize,
-    ) -> RangePart<'a, T, I> {
-        SequencePart {
-            parent_sequence,
+    ) -> Self {
+        Self {
             part: Range::new(start, end),
-            iter_index: start,
+            parent_sequence,
+            iter_index: 0,
         }
     }
 
     /// Checks if the element is in the range
     pub fn nth_element_is_in_range(&self, index: usize) -> bool {
-        index >= self.part.start() && index < self.part.end()
+        self.part.nth_element_is_in_range(index)
     }
 
-    /// Returns the nth elements of the range part
+    /// Returns the nth element of the immutable range part.
     pub fn nth_element(&mut self, index: usize) -> Option<&T> {
+        let index = index + self.part.start();
+
+        if !self.nth_element_is_in_range(index) {
+            return None;
+        }
+
+        self.parent_sequence.nth_element_without_generation(index)
+    }
+}
+
+impl<'a, T, I> RangePartMut<'a, T, I> {
+    /// Creates a new instance that represents a mutable range of a sequence.
+    pub(super) fn new_range_mut(
+        parent_sequence: ParentSequenceRefMut<'a, T, I>,
+        start: usize,
+        end: usize,
+    ) -> Self {
+        SequencePart {
+            parent_sequence,
+            part: Range::new(start, end),
+            iter_index: 0,
+        }
+    }
+
+    /// Checks if the element is in the range
+    pub fn nth_element_is_in_range(&self, index: usize) -> bool {
+        self.part.nth_element_is_in_range(index)
+    }
+
+    /// Returns the nth element of the mutable range part.
+    pub fn nth_element(&mut self, index: usize) -> Option<&T> {
+        let index = index + self.part.start();
+
         if !self.nth_element_is_in_range(index) {
             return None;
         }
@@ -104,13 +146,13 @@ impl<'a, T, I> RangePart<'a, T, I> {
     }
 
     /// Returns the first element of the range part.
-    pub fn first_element(&mut self) -> Option<&T> {
-        self.nth_element(self.part.start())
+    pub fn first_element(&mut self) -> &T {
+        self.parent_sequence.nth_element(self.part.start())
     }
 
     /// Returns the last element of the range part.
-    pub fn last_element(&mut self) -> Option<&T> {
-        self.nth_element(self.part.end())
+    pub fn last_element(&mut self) -> &T {
+        self.parent_sequence.nth_element(self.part.end() - 1)
     }
 }
 
@@ -124,7 +166,17 @@ impl<'a, T, I> SharedSequencePartBehavior<'a, T, I> for AliveElementsPart<'a, T,
     }
 }
 
-impl<'a, T, I> SharedSequencePartBehavior<'a, T, I> for RangePart<'a, T, I> {
+impl<'a, T, I> SharedSequencePartBehavior<'a, T, I> for RangePartImmut<'a, T, I> {
+    fn len(&self) -> usize {
+        self.part.end() - self.part.start()
+    }
+
+    fn parent_sequence(&self) -> ParentSequenceRef<'a, T, I> {
+        self.parent_sequence
+    }
+}
+
+impl<'a, T, I> SharedSequencePartBehavior<'a, T, I> for RangePartMut<'a, T, I> {
     fn len(&self) -> usize {
         self.part.end() - self.part.start()
     }
@@ -150,7 +202,7 @@ impl<'a, T: Clone, I> Iterator for AliveElementsPart<'a, T, I> {
     }
 }
 
-impl<'a, T: Clone, I> Iterator for RangePart<'a, T, I> {
+impl<'a, T: Clone, I> Iterator for RangePartImmut<'a, T, I> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -162,6 +214,24 @@ impl<'a, T: Clone, I> Iterator for RangePart<'a, T, I> {
         }
 
         self.iter_index += 1;
+
+        self.nth_element(iter_index).cloned()
+    }
+}
+
+impl<'a, T: Clone, I> Iterator for RangePartMut<'a, T, I> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let iter_index = self.iter_index;
+
+        if iter_index == self.part.end() {
+            self.iter_index = 0;
+            return None;
+        }
+
+        self.iter_index += 1;
+
         self.nth_element(iter_index).cloned()
     }
 }
