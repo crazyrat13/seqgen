@@ -9,7 +9,7 @@ use self::{states::*, types::TransitionFunction};
 use crate::sequence_part::{
     error::RangeError,
     states::AliveElements,
-    types::{RangeMutResult, RangeResult},
+    types::{RangePartImmutResult, RangePartMutResult},
     SequencePart,
 };
 
@@ -51,24 +51,16 @@ impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
     pub fn new() -> Self {
         Sequence::default()
     }
-}
 
-impl<T> Sequence<T, WithoutInitialElements, WithoutTransitionFunction> {
     /// Adds initial elements to Sequence
     pub fn initial_elements(
         self,
         initial_elements: Vec<T>,
     ) -> Sequence<T, WithInitialElements, WithoutTransitionFunction> {
-        let initial_elements_len = initial_elements.len();
-        let alive_elements = initial_elements
-            .into_iter()
-            .chain(self.alive_elements)
-            .collect::<Vec<_>>();
-
         Sequence {
-            initial_elements: WithInitialElements::new(initial_elements_len),
+            initial_elements: WithInitialElements::new(initial_elements.len()),
             trans_func: self.trans_func,
-            alive_elements,
+            alive_elements: initial_elements,
             iter_index: self.iter_index,
         }
     }
@@ -97,16 +89,6 @@ impl<T, I> Sequence<T, I, WithoutTransitionFunction> {
 }
 
 impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
-    /// Returns the length of the alive elements
-    pub fn alive_elements_len(&self) -> usize {
-        self.alive_elements.len()
-    }
-
-    /// Checks if an elements is alive
-    pub fn nth_element_is_alive(&self, index: usize) -> bool {
-        index < self.alive_elements_len()
-    }
-
     /// Generates the nth element and all the preceding elements and stores them in the sequence.
     fn generate_nth_element(&mut self, nth_element: usize) {
         if !self.nth_element_is_alive(nth_element) {
@@ -123,18 +105,6 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         }
     }
 
-    /// Generates the specified number of elements
-    pub fn generate(&mut self, number_of_elements: usize) {
-        self.generate_nth_element(self.alive_elements_len() + number_of_elements - 1);
-    }
-
-    /// Returns a reference to the nth element if it is alive.
-    /// This method generate the nth elements if it is dead before returning its reference
-    pub fn nth_element(&mut self, index: usize) -> &T {
-        self.generate_nth_element(index);
-        &self.alive_elements[index]
-    }
-
     /// Returns a reference to the nth element if it is alive in a Some variant
     /// This method does not generate the nth elements if it is dead it just returns None
     pub(crate) fn nth_element_without_generation(&self, index: usize) -> Option<&T> {
@@ -145,6 +115,28 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
         Some(&self.alive_elements[index])
     }
 
+    /// Generates the specified number of elements
+    pub fn generate(&mut self, number_of_elements: usize) {
+        self.generate_nth_element(self.alive_elements_len() + number_of_elements - 1);
+    }
+
+    /// Returns the length of the alive elements
+    pub fn alive_elements_len(&self) -> usize {
+        self.alive_elements.len()
+    }
+
+    /// Checks if an elements is alive
+    pub fn nth_element_is_alive(&self, index: usize) -> bool {
+        index < self.alive_elements_len()
+    }
+
+    /// Returns a reference to the nth element if it is alive.
+    /// This method generate the nth elements if it is dead before returning its reference
+    pub fn nth_element(&mut self, index: usize) -> &T {
+        self.generate_nth_element(index);
+        &self.alive_elements[index]
+    }
+
     /// Returns a sequence part that represents the alive elements
     pub fn alive_elements(
         &self,
@@ -153,12 +145,12 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     }
 
     /// Returns a sequence part that represents an immutable range of sequence
-    pub fn range(&self, start: usize, end: usize) -> RangeResult<'_, T, I> {
+    pub fn range(&self, start: usize, end: usize) -> RangePartImmutResult<'_, T, I> {
         if start > end {
             return Err(RangeError::InvalidRange { start, end });
         }
 
-        if !self.nth_element_is_alive(end) {
+        if !self.nth_element_is_alive(end - 1) {
             return Err(RangeError::DeadRange);
         }
 
@@ -166,7 +158,7 @@ impl<T, I> Sequence<T, I, WithTransitionFunction<T, I>> {
     }
 
     /// Returns a sequence part that represents a mutable range of sequence
-    pub fn range_mut(&mut self, start: usize, end: usize) -> RangeMutResult<'_, T, I> {
+    pub fn range_mut(&mut self, start: usize, end: usize) -> RangePartMutResult<'_, T, I> {
         if start > end {
             return Err(RangeError::InvalidRange { start, end });
         }

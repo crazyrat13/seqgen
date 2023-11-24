@@ -27,8 +27,8 @@ pub(crate) type RangePartImmut<'a, T, I> = RangePart<ParentSequenceRef<'a, T, I>
 /// Mutable range part type.
 pub(crate) type RangePartMut<'a, T, I> = RangePart<ParentSequenceRefMut<'a, T, I>>;
 
-/// Range result that is returned when creating immutable ranges.
-pub(crate) type RangeResult<'a, T, I> = Result<RangePartImmut<'a, T, I>, RangeError>;
+/// Range part result that is returned when creating immutable ranges.
+pub(crate) type RangePartImmutResult<'a, T, I> = Result<RangePartImmut<'a, T, I>, RangeError>;
 
-/// Range result that is returned when creating mutable ranges.
-pub(crate) type RangeMutResult<'a, T, I> = Result<RangePartMut<'a, T, I>, RangeError>;
+/// Range part result that is returned when creating mutable ranges.
+pub(crate) type RangePartMutResult<'a, T, I> = Result<RangePartMut<'a, T, I>, RangeError>;
