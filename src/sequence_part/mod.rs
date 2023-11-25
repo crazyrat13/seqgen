@@ -8,9 +8,8 @@
 //! The range parts are lazy and can mutate the sequence.
 //! The alive part can not mutate the sequence.
 
-pub(crate) mod states;
-pub(crate) mod types;
-
+pub mod states;
+pub mod types;
 pub mod error;
 
 use self::{

@@ -1,8 +1,8 @@
 //! This module defines the Sequence type
 //! and it is the core of this library
 
-pub(crate) mod states;
-pub(crate) mod types;
+pub mod states;
+pub mod types;
 
 use self::{states::*, types::TransitionFunction};
 

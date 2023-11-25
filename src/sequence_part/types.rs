@@ -9,26 +9,27 @@ use super::{
 use crate::sequence::{states::WithTransitionFunction, Sequence};
 
 /// An immutable reference to the parent sequence.
-pub(crate) type ParentSequenceRef<'a, T, I> = &'a Sequence<T, I, WithTransitionFunction<T, I>>;
+pub type ParentSequenceRef<'a, T, I> = &'a Sequence<T, I, WithTransitionFunction<T, I>>;
 
 /// A mutable reference to the parent sequence.
-pub(crate) type ParentSequenceRefMut<'a, T, I> =
+pub type ParentSequenceRefMut<'a, T, I> =
     &'a mut Sequence<T, I, WithTransitionFunction<T, I>>;
 
 /// Alive elements part.
-pub(crate) type AliveElementsPart<'a, T, I> =
+pub type AliveElementsPart<'a, T, I> =
     SequencePart<AliveElements, ParentSequenceRef<'a, T, I>>;
 
-pub(crate) type RangePart<P> = SequencePart<Range, P>;
+/// Generic range part
+pub type RangePart<P> = SequencePart<Range, P>;
 
 /// Immutable range part type.
-pub(crate) type RangePartImmut<'a, T, I> = RangePart<ParentSequenceRef<'a, T, I>>;
+pub type RangePartImmut<'a, T, I> = RangePart<ParentSequenceRef<'a, T, I>>;
 
 /// Mutable range part type.
-pub(crate) type RangePartMut<'a, T, I> = RangePart<ParentSequenceRefMut<'a, T, I>>;
+pub type RangePartMut<'a, T, I> = RangePart<ParentSequenceRefMut<'a, T, I>>;
 
 /// Range part result that is returned when creating immutable ranges.
-pub(crate) type RangePartImmutResult<'a, T, I> = Result<RangePartImmut<'a, T, I>, RangeError>;
+pub type RangePartImmutResult<'a, T, I> = Result<RangePartImmut<'a, T, I>, RangeError>;
 
 /// Range part result that is returned when creating mutable ranges.
-pub(crate) type RangePartMutResult<'a, T, I> = Result<RangePartMut<'a, T, I>, RangeError>;
+pub type RangePartMutResult<'a, T, I> = Result<RangePartMut<'a, T, I>, RangeError>;
