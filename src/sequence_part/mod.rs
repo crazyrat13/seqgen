@@ -8,9 +8,9 @@
 //! The range parts are lazy and can mutate the sequence.
 //! The alive part can not mutate the sequence.
 
+pub mod error;
 pub mod states;
 pub mod types;
-pub mod error;
 
 use self::{
     states::*,
