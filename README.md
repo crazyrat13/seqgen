@@ -1,3 +1,5 @@
+![](assets/seqgen_background.jpeg)
+
 # SeqGen
 
 ## Sequence generation library
