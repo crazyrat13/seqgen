@@ -6,16 +6,17 @@ use std::{
 };
 
 /// Range error happens when creating bad ranges.
-/// Example of this error could be trying to get a range where its end is less then its start.
+/// Example of this error could be trying to get 
+/// a range where its end is less then its start.
 pub enum RangeError {
-    /// Represents an invalid range (start of range greater than its end)
+    /// Represents an invalid range (start of range greater than its end).
     InvalidRange {
-        /// Start of the range
+        /// Start of the range.
         start: usize,
-        /// End of the range
+        /// End of the range.
         end: usize,
     },
-    /// Requested range is dead
+    /// Requested range is dead.
     DeadRange,
 }
 

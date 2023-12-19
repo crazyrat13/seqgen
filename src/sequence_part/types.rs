@@ -1,4 +1,4 @@
-//! This module defines type aliases for sequence part
+//! This module defines type aliases for sequence parts
 
 use super::{
     error::RangeError,
@@ -19,7 +19,7 @@ pub type ParentSequenceRefMut<'a, T, I> =
 pub type AliveElementsPart<'a, T, I> =
     SequencePart<AliveElements, ParentSequenceRef<'a, T, I>>;
 
-/// Generic range part
+/// Generic range part.
 pub type RangePart<P> = SequencePart<Range, P>;
 
 /// Immutable range part type.

@@ -1,11 +1,9 @@
-//! This module defines type aliases for sequence
+//! This module defines type aliases for the sequence module
 
-use super::{states::WithTransitionFunction, Sequence};
-
-use crate::sequence_part::{states::AliveElements, SequencePart};
+use crate::sequence_part::types::AliveElementsPart;
 
 /// A type that represents the transition function.
-/// The first parameter is the alive element part of
-/// the sequence, and the second is the index of the currently generated element
-pub type TransitionFunction<T, I> =
-    fn(SequencePart<AliveElements, &Sequence<T, I, WithTransitionFunction<T, I>>>, usize) -> T;
+/// The first parameter is the alive elements part of
+/// the sequence, and the second is the index of the
+/// current element in generation.
+pub type TransitionFunction<T, I> = fn(AliveElementsPart<'_, T, I>, usize) -> T;

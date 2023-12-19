@@ -21,14 +21,16 @@ use self::{
 };
 
 /// This type represents a part of a sequence.
-/// it could be the alive elements or a custom range of the sequence.
+/// it could be the alive elements or a custom
+/// range of the sequence.
 pub struct SequencePart<P, S> {
     part: P,
     parent_sequence: S,
     iter_index: usize,
 }
 
-/// Shared behavior between range part and alive elements part.
+/// Shared behavior between range part
+/// and alive elements part.
 pub trait SharedSequencePartBehavior<'a, T, I> {
     /// Returns the length of the sequence part.
     fn len(&self) -> usize;
@@ -43,7 +45,8 @@ pub trait SharedSequencePartBehavior<'a, T, I> {
 }
 
 impl<'a, T, I> AliveElementsPart<'a, T, I> {
-    /// Create a new instance that represents the alive elements.
+    /// Create a new instance that represents 
+    /// the alive elements part of a sequence.
     pub(super) fn new(parent_sequence: ParentSequenceRef<'a, T, I>) -> Self {
         Self {
             parent_sequence,
@@ -57,30 +60,31 @@ impl<'a, T, I> AliveElementsPart<'a, T, I> {
         self.parent_sequence.nth_element_is_alive(index)
     }
 
-    /// Returns the nth elements of the alive elements
+    /// Returns the nth elements of the alive elements part.
     pub fn nth_element(&self, index: usize) -> Option<&T> {
         self.parent_sequence.nth_element_without_generation(index)
     }
 
-    /// Returns the first element of the alive part.
+    /// Returns the first element of the alive elements part.
     pub fn first_element(&self) -> Option<&T> {
         self.nth_element(0)
     }
 
-    /// Returns the last element of the alive part.
+    /// Returns the last element of the alive elements part.
     pub fn last_element(&self) -> Option<&T> {
         self.nth_element(self.len() - 1)
     }
 }
 
 impl<P> RangePart<P> {
-    /// Checks if the element is in the range
+    /// Checks if the element is in range.
     pub fn nth_element_is_in_range(&self, index: usize) -> bool {
         self.part.nth_element_is_in_range(index)
     }
 }
 
 impl<'a, T, I> RangePartImmut<'a, T, I> {
+    /// Create a new instance that represents an immutable range of a sequence.
     pub(super) fn new_range(
         parent_sequence: ParentSequenceRef<'a, T, I>,
         start: usize,
@@ -93,7 +97,7 @@ impl<'a, T, I> RangePartImmut<'a, T, I> {
         }
     }
 
-    /// Returns the nth element of the immutable range part
+    /// Returns the nth element of the immutable range part.
     pub fn nth_element(&self, index: usize) -> Option<&T> {
         let index = index + self.part.start();
 
